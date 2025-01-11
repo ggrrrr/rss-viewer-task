@@ -1,4 +1,4 @@
-package client
+package rssclient
 
 import (
 	"context"
@@ -8,26 +8,25 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/ggrrrr/rss-viewer-task/be/pkg/rssclient"
+	"github.com/ggrrrr/rss-viewer-task/be/pkg/rssclient/internal/client"
 )
 
-func TestParse(t *testing.T) {
+func TestParseRSS(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		fromRss *rssRoot
-		result  []*rssclient.RssItem
+		fromRss client.RSSRoot
+		result  []RssItem
 	}{
 		{
 			name: "ok",
-			fromRss: &rssRoot{
+			fromRss: client.RSSRoot{
 				XMLName:            xml.Name{},
 				Version:            "2.0",
 				ChannelTitle:       "channel title",
 				ChannelLink:        "channel link",
 				ChannelDescription: "channel description",
-				ChannelPubDate:     "",
-				ItemList: []rssItem{
+				ItemList: []client.RSSItem{
 					{
 						Title:       "item 1 title",
 						Link:        "item 1 link",
@@ -36,7 +35,7 @@ func TestParse(t *testing.T) {
 					},
 				},
 			},
-			result: []*rssclient.RssItem{
+			result: []RssItem{
 				{
 					Title:       "item 1 title",
 					Source:      "channel title",
@@ -49,14 +48,13 @@ func TestParse(t *testing.T) {
 		},
 		{
 			name: "time error",
-			fromRss: &rssRoot{
+			fromRss: client.RSSRoot{
 				XMLName:            xml.Name{},
 				Version:            "2.0",
 				ChannelTitle:       "channel title",
 				ChannelLink:        "channel link",
 				ChannelDescription: "channel description",
-				ChannelPubDate:     "",
-				ItemList: []rssItem{
+				ItemList: []client.RSSItem{
 					{
 						Title:       "item 1 title",
 						Link:        "item 1 link",
@@ -65,7 +63,7 @@ func TestParse(t *testing.T) {
 					},
 				},
 			},
-			result: []*rssclient.RssItem{
+			result: []RssItem{
 				{
 					Title:     "item 1 title",
 					Source:    "channel title",
@@ -82,7 +80,7 @@ func TestParse(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			result := tc.fromRss.parseRSS(ctx)
+			result := parseRSS(ctx, tc.fromRss)
 			require.Equal(t, tc.result, result)
 		})
 	}

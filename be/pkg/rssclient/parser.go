@@ -1,4 +1,4 @@
-package client
+package rssclient
 
 import (
 	"context"
@@ -6,32 +6,32 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ggrrrr/rss-viewer-task/be/pkg/rssclient"
+	"github.com/ggrrrr/rss-viewer-task/be/pkg/rssclient/internal/client"
 )
 
-func (r *rssRoot) parseRSS(ctx context.Context) []*rssclient.RssItem {
+func parseRSS(ctx context.Context, r client.RSSRoot) []RssItem {
 	// TODO add OTEL span
-	rssItems := make([]*rssclient.RssItem, 0, len(r.ItemList))
+	rssItems := make([]RssItem, 0, len(r.ItemList))
 	for i := range r.ItemList {
-		item := r.createRssItem()
-		err := r.ItemList[i].updateDetails(item)
+		item := createRssItem(r)
+		err := updateDetails(&r.ItemList[i], &item)
 		if err != nil {
 			// TODO add span err and logging
-			slog.ErrorContext(ctx, "rss parse", slog.Attr{Key: "error", Value: slog.AnyValue(err)})
+			slog.ErrorContext(ctx, "rss parse", slog.String("error", err.Error()))
 		}
 		rssItems = append(rssItems, item)
 	}
 	return rssItems
 }
 
-func (r *rssRoot) createRssItem() *rssclient.RssItem {
-	rssItem := rssclient.RssItem{}
+func createRssItem(r client.RSSRoot) RssItem {
+	rssItem := RssItem{}
 	rssItem.Source = r.ChannelTitle
 	rssItem.SourceURL = r.ChannelLink
-	return &rssItem
+	return rssItem
 }
 
-func (fromItem *rssItem) updateDetails(toItem *rssclient.RssItem) error {
+func updateDetails(fromItem *client.RSSItem, toItem *RssItem) error {
 	toItem.Title = fromItem.Title
 	toItem.Description = fromItem.Description
 	if fromItem.Link != "" {

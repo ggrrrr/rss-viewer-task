@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Channel Title</title>
+    <link>https://ress.serveri/feed/</link>
+    <description>description</description>
+    <item>
+      <title>2 item 1 title</title>
+      <description>item 1 description</description>
+      <pubDate>Tue, 8 Jan 2019 01:15:00 GMT</pubDate>
+      <link>http://itemlink/link2/1</link>
+    </item>
+    <item>
+      <title>2 item 2 title</title>
+      <description>item 2 description</description>
+      <pubDate>Tue, 8 Jan 2019 01:15:00 GMT</pubDate>
+      <link>http://itemlink/link2/2</link>
+    </item>
+  </channel>
+</rss>

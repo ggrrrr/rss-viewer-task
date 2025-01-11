@@ -12,7 +12,7 @@ func TestRSSDecode(t *testing.T) {
 	tests := []struct {
 		name    string
 		fromXml string
-		result  rssRoot
+		result  RSSRoot
 		expErr  error
 	}{
 		{
@@ -32,14 +32,13 @@ func TestRSSDecode(t *testing.T) {
 </channel>
 </rss>
   `,
-			result: rssRoot{
+			result: RSSRoot{
 				XMLName:            xml.Name{Space: "", Local: "rss"},
 				Version:            "2.0",
 				ChannelTitle:       "channel title",
 				ChannelLink:        "channel link",
 				ChannelDescription: "channel description",
-				ChannelPubDate:     "Thu, 26 Feb 2015 14:15:27 GMT",
-				ItemList: []rssItem{
+				ItemList: []RSSItem{
 					{
 						Title:       "item 1 title",
 						PubDate:     "Thu, 26 Feb 2015 14:14:59 GMT",
@@ -52,7 +51,7 @@ func TestRSSDecode(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			root := rssRoot{}
+			root := RSSRoot{}
 			err := xml.Unmarshal([]byte(tc.fromXml), &root)
 			if tc.expErr == nil {
 				require.Equal(t, tc.result, root)

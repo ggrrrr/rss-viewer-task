@@ -2,16 +2,15 @@ package client
 
 import (
 	"context"
+	"encoding/xml"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/ggrrrr/rss-viewer-task/be/pkg/rssclient"
 	"github.com/ggrrrr/rss-viewer-task/be/pkg/rssclient/testdata"
 	// "github.com/ggrrrr/rss-viewer-task/be/testdata"
 )
@@ -26,7 +25,10 @@ func createTestResponse(t *testing.T, status int, file string) *httptest.Server 
 			if err != nil {
 				t.Fatal(t, err, "read test file error")
 			}
-			w.Write(content)
+			_, err = w.Write(content)
+			if err != nil {
+				t.Fatal(t, err, "write http body error")
+			}
 		}
 	}))
 
@@ -37,20 +39,25 @@ func TestFetch(t *testing.T) {
 	tests := []struct {
 		name   string
 		server *httptest.Server
-		result []*rssclient.RssItem
+		result RSSRoot
 		err    error
 	}{
 		{
 			name:   "ok",
 			server: createTestResponse(t, 200, "small_feed.xml"),
-			result: []*rssclient.RssItem{
-				{
-					Title:       "item 1 title",
-					Source:      "Channel Title",
-					SourceURL:   "https://ress.serveri/feed/",
-					Link:        "http://itemlink/",
-					PublishDate: time.Date(2019, 1, 8, 1, 15, 0, 0, time.UTC),
-					Description: "item 1 description",
+			result: RSSRoot{
+				XMLName:            xml.Name{Space: "", Local: "rss"},
+				Version:            "2.0",
+				ChannelTitle:       "Channel Title",
+				ChannelLink:        "https://ress.serveri/feed/",
+				ChannelDescription: "description",
+				ItemList: []RSSItem{
+					{
+						Title:       "item 1 title",
+						Link:        "http://itemlink/",
+						PubDate:     "Tue, 8 Jan 2019 01:15:00 GMT",
+						Description: "item 1 description",
+					},
 				},
 			},
 			err: nil,
@@ -58,26 +65,26 @@ func TestFetch(t *testing.T) {
 		{
 			name:   "error 400",
 			server: createTestResponse(t, 400, ""),
-			result: []*rssclient.RssItem{},
-			err:    ErrHttpBadRequest,
+			// result: []*rssclient.RssItem{},
+			err: ErrHttpBadRequest,
 		},
 		{
 			name:   "error 401",
 			server: createTestResponse(t, 401, ""),
-			result: []*rssclient.RssItem{},
-			err:    ErrHttpUnauthorized,
+			// result: []*rssclient.RssItem{},
+			err: ErrHttpUnauthorized,
 		},
 		{
 			name:   "error 404",
 			server: createTestResponse(t, 404, ""),
-			result: []*rssclient.RssItem{},
-			err:    ErrHttpNotFound,
+			// result: []*rssclient.RssItem{},
+			err: ErrHttpNotFound,
 		},
 		{
 			name:   "error 500",
 			server: createTestResponse(t, 500, ""),
-			result: []*rssclient.RssItem{},
-			err:    ErrHttpSystem,
+			// result: []*rssclient.RssItem{},
+			err: ErrHttpSystem,
 		},
 	}
 	for _, tc := range tests {

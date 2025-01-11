@@ -4,53 +4,47 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
+	"log/slog"
 	"net/http"
-
-	"github.com/ggrrrr/rss-viewer-task/be/pkg/rssclient"
 )
 
 const supportedRSSVersion string = "2.0"
 
-func Fetch(ctx context.Context, url string) ([]*rssclient.RssItem, error) {
+func Fetch(ctx context.Context, url string) (root RSSRoot, err error) {
 	// TODO add OTEL Span
+	slog.DebugContext(ctx, "client.Parse", slog.String("url", url))
 	res, err := http.Get(url)
 	if err != nil {
-		return nil, fmt.Errorf("cant call url %w", err)
+		return root, fmt.Errorf("cant call url %w", err)
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode == 400 {
-		return nil, ErrHttpBadRequest
+		return root, ErrHttpBadRequest
 	}
 	if res.StatusCode == 404 {
-		return nil, ErrHttpNotFound
+		return root, ErrHttpNotFound
 	}
 
 	if res.StatusCode == 401 ||
 		res.StatusCode == 403 {
-		return nil, ErrHttpUnauthorized
+		return root, ErrHttpUnauthorized
 	}
 
 	if res.StatusCode >= 500 {
-		return nil, ErrHttpSystem
+		return root, ErrHttpSystem
 	}
 
 	decoder := xml.NewDecoder(res.Body)
-	root := rssRoot{}
 
 	err = decoder.Decode(&root)
 	if err != nil {
-		return nil, fmt.Errorf("cant parse data %w", err)
+		return root, fmt.Errorf("cant parse data %w", err)
 	}
 
 	if root.Version != supportedRSSVersion {
-		return nil, fmt.Errorf("unsupported version %s", root.Version)
+		return root, fmt.Errorf("unsupported version %s", root.Version)
 	}
 
-	// Here we dont really care if we have item parsing errors
-	// We will only log these
-	result := root.parseRSS(ctx)
-
-	fmt.Printf("\n%+v", result)
-	return result, nil
+	return root, nil
 }
