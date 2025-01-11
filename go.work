@@ -1,7 +1,7 @@
 go 1.23.4
 
 use (
-	./be/pkg/rssclient
 	./be/pkg/common
+	./be/pkg/rssclient
 	./be/svc/rssaggregator
 )

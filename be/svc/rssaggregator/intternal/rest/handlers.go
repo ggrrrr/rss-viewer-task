@@ -1,12 +1,9 @@
 package rest
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"github.com/go-chi/chi"
 
 	"github.com/ggrrrr/rss-viewer-task/be/pkg/common/auth"
 	"github.com/ggrrrr/rss-viewer-task/be/pkg/common/web"
@@ -14,14 +11,6 @@ import (
 )
 
 type (
-	application interface {
-		Fetch(ctx context.Context, urls []string) []app.RSSItem
-	}
-
-	server struct {
-		app application
-	}
-
 	fetchRSSResponse struct {
 		Items []app.RSSItem `json:"items"`
 	}
@@ -30,15 +19,6 @@ type (
 		URL []string `json:"urls"`
 	}
 )
-
-func Router(a application) http.Handler {
-	s := server{
-		app: a,
-	}
-	router := chi.NewRouter()
-	router.Post("/parse", s.fetchRSS)
-	return router
-}
 
 func (s server) fetchRSS(w http.ResponseWriter, r *http.Request) {
 	user := auth.Extract(r.Context())
