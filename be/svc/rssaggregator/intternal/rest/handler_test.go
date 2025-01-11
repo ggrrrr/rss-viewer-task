@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -42,12 +43,15 @@ func TestFetch(t *testing.T) {
 			authInfo: auth.AuthInfo{User: "admin"},
 			prepFunc: func(t *testing.T) {
 				mockApp.On("Fetch", "url1").Return([]app.RSSItem{
-					{Title: "title"},
+					{
+						Title:       "title",
+						PublishDate: time.Date(2019, 1, 23, 1, 15, 0, 0, time.UTC),
+					},
 				}, nil)
 			},
 			requestBody:        `{"urls":["url1"]}`,
 			responseStatusCode: 200,
-			responseBody:       `{"items":[{"title":"title","publish_date":"0001-01-01T00:00:00Z"}]}`,
+			responseBody:       `{"items":[{"title":"title","publish_date":"2019-01-23T01:15:00Z"}]}`,
 		},
 		{
 			name: "err 401",

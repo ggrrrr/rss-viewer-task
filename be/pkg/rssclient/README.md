@@ -34,7 +34,8 @@ import (
 )
 
 func main() {
-    items := rssclient.Parse(
+    parser := rssclient.New() 
+    items := parser.Parse(
         context.Background(),
         []string{"https://news.google.com/rss/search?hl=en-US&gl=US&q=samsung&um=1&ie=UTF-8&ceid=US:en"},
     )
