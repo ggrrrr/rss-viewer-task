@@ -3,6 +3,7 @@ package rest
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/ggrrrr/rss-viewer-task/be/pkg/common/auth"
@@ -22,7 +23,7 @@ type (
 
 func (s server) fetchRSS(w http.ResponseWriter, r *http.Request) {
 	user := auth.Extract(r.Context())
-	if !auth.HasAccess(user, r.URL.Path) {
+	if !auth.HasAccess(user) {
 		web.SendUnauthorized(w)
 		return
 	}
@@ -42,11 +43,13 @@ func (s server) fetchRSS(w http.ResponseWriter, r *http.Request) {
 	fetchRequest := fetchRSSRequest{}
 	err := decoder.Decode(&fetchRequest)
 	if err != nil {
+		slog.Error("parse error", slog.Any("error", err))
 		web.SendBadRequest(w, err)
 		return
 	}
 
 	if len(fetchRequest.URL) == 0 {
+		slog.Error("no result")
 		web.SendBadRequest(w, fmt.Errorf("empty list of url"))
 		return
 	}

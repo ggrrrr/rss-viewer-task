@@ -26,9 +26,6 @@ func Extract(ctx context.Context) AuthInfo {
 	return AuthInfo{}
 }
 
-func HasAccess(a AuthInfo, path string) bool {
-	if a.User != "" {
-		return true
-	}
-	return false
+func HasAccess(a AuthInfo) bool {
+	return a.User != ""
 }

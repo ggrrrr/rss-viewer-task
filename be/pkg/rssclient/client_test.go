@@ -34,6 +34,9 @@ func createTestResponse(t *testing.T, status int, file string) *httptest.Server 
 }
 
 func TestParse(t *testing.T) {
+
+	tetsRSSParser := RSSParser{}
+
 	tests := []struct {
 		name    string
 		servers []*httptest.Server
@@ -65,7 +68,7 @@ func TestParse(t *testing.T) {
 			for i := range tc.servers {
 				urls[i] = tc.servers[i].URL
 			}
-			result := Parse(context.TODO(), urls)
+			result := tetsRSSParser.Parse(context.TODO(), urls)
 			require.Equal(t, tc.result, result)
 
 		})
@@ -74,6 +77,7 @@ func TestParse(t *testing.T) {
 }
 
 func TestMultiURL(t *testing.T) {
+	testRSSParser := New()
 	tests := []struct {
 		name    string
 		servers []*httptest.Server
@@ -95,7 +99,7 @@ func TestMultiURL(t *testing.T) {
 			for i := range tc.servers {
 				urls[i] = tc.servers[i].URL
 			}
-			result := Parse(context.TODO(), urls)
+			result := testRSSParser.Parse(context.TODO(), urls)
 			require.Equal(t, len(result), 5)
 
 		})

@@ -56,7 +56,7 @@ func newHTTPRouter(s *System) {
 	s.mux.Use(middleware.Heartbeat("/liveness"))
 	s.mux.Use(middleware.Logger)
 	s.mux.Use(s.httpHandlerAuth)
-	s.mux.Use(middleware.Recoverer)
+	// s.mux.Use(middleware.Recoverer)
 
 }
 

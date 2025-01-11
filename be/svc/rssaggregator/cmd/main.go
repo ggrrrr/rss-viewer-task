@@ -5,6 +5,7 @@ import (
 
 	"github.com/ggrrrr/rss-viewer-task/be/pkg/common/logger"
 	"github.com/ggrrrr/rss-viewer-task/be/pkg/common/system"
+	"github.com/ggrrrr/rss-viewer-task/be/pkg/rssclient"
 	"github.com/ggrrrr/rss-viewer-task/be/svc/rssaggregator/intternal/app"
 	"github.com/ggrrrr/rss-viewer-task/be/svc/rssaggregator/intternal/rest"
 )
@@ -18,7 +19,12 @@ func main() {
 		panic(err)
 	}
 
-	router := rest.Router(app.App{})
+	a := app.New(rssclient.New())
+
+	router := rest.Router(a)
 	s.MountAPI("/v1", router)
-	s.StartWeb(context.Background())
+	err = s.StartWeb(context.Background())
+	if err != nil {
+		panic(err)
+	}
 }

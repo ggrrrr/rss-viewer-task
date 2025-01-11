@@ -8,7 +8,15 @@ import (
 	"github.com/ggrrrr/rss-viewer-task/be/pkg/rssclient/internal/client"
 )
 
-func Parse(ctx context.Context, urls []string) []RssItem {
+type RSSParser struct {
+}
+
+func New() RSSParser {
+	return RSSParser{}
+}
+
+// This is to help us with unit testing
+func (RSSParser) Parse(ctx context.Context, urls []string) []RssItem {
 	var wg sync.WaitGroup
 	var result = make([]RssItem, 0)
 	var ch = make(chan []RssItem)

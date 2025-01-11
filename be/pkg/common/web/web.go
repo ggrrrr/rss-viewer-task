@@ -19,7 +19,7 @@ func SendUnauthorized(w http.ResponseWriter) {
 }
 
 func SendBadRequest(w http.ResponseWriter, err error) {
-	sendPayload(w, 401, errorResponse{
+	sendPayload(w, 400, errorResponse{
 		Code:  400,
 		Error: err.Error(),
 	})
