@@ -9,8 +9,6 @@ import (
 )
 
 func Parse(ctx context.Context, urls []string) []RssItem {
-	// TODO add OTEL span
-
 	var wg sync.WaitGroup
 	var result = make([]RssItem, 0)
 	var ch = make(chan []RssItem)
@@ -21,17 +19,17 @@ func Parse(ctx context.Context, urls []string) []RssItem {
 			defer wg.Done()
 			result, err := client.Fetch(ctx, url)
 			if err != nil {
-				slog.ErrorContext(ctx, "client.Fetch", slog.String("url", url), slog.String("error", err.Error()))
+				slog.Error("rssclient.client.Fetch", slog.String("url", url), slog.String("error", err.Error()))
 				return
 			}
-			ch <- parseRSS(ctx, result)
+			ch <- parseRSS(result)
 		}()
 	}
 
 	go func() {
 		wg.Wait()
 		close(ch)
-		slog.InfoContext(ctx, "wg.Wait.")
+		slog.Debug("rssclient.Parse.wg.Wait.")
 	}()
 
 	for items := range ch {

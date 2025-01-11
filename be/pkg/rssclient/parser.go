@@ -1,7 +1,6 @@
 package rssclient
 
 import (
-	"context"
 	"log/slog"
 	"strings"
 	"time"
@@ -9,15 +8,14 @@ import (
 	"github.com/ggrrrr/rss-viewer-task/be/pkg/rssclient/internal/client"
 )
 
-func parseRSS(ctx context.Context, r client.RSSRoot) []RssItem {
-	// TODO add OTEL span
+func parseRSS(r client.RSSRoot) []RssItem {
 	rssItems := make([]RssItem, 0, len(r.ItemList))
 	for i := range r.ItemList {
 		item := createRssItem(r)
 		err := updateDetails(&r.ItemList[i], &item)
 		if err != nil {
 			// TODO add span err and logging
-			slog.ErrorContext(ctx, "rss parse", slog.String("error", err.Error()))
+			slog.Error("rss parse", slog.String("error", err.Error()))
 		}
 		rssItems = append(rssItems, item)
 	}

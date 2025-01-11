@@ -1,7 +1,6 @@
 package rssclient
 
 import (
-	"context"
 	"encoding/xml"
 	"testing"
 	"time"
@@ -76,11 +75,9 @@ func TestParseRSS(t *testing.T) {
 		},
 	}
 
-	ctx := context.TODO()
-
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			result := parseRSS(ctx, tc.fromRss)
+			result := parseRSS(tc.fromRss)
 			require.Equal(t, tc.result, result)
 		})
 	}

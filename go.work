@@ -1,3 +1,7 @@
 go 1.23.4
 
-use ./be/pkg/rssclient
+use (
+	./be/pkg/rssclient
+	./be/pkg/common
+	./be/svc/rssaggregator
+)

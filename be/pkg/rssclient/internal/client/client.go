@@ -13,7 +13,13 @@ const supportedRSSVersion string = "2.0"
 func Fetch(ctx context.Context, url string) (root RSSRoot, err error) {
 	// TODO add OTEL Span
 	slog.DebugContext(ctx, "client.Parse", slog.String("url", url))
-	res, err := http.Get(url)
+
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return root, fmt.Errorf("cant create request %w", err)
+	}
+
+	res, err := http.DefaultClient.Do(request)
 	if err != nil {
 		return root, fmt.Errorf("cant call url %w", err)
 	}
