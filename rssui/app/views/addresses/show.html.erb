@@ -1,0 +1,6 @@
+<%= link_to "Addresses", addresses_path %>
+<h1>
+<%= @address.url %>
+</h1>
+
+<%= button_to "Delete", @address, method: :delete, data: { turbo_confirm: "Are you sure?" } %>

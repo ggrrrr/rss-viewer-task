@@ -1,0 +1,13 @@
+<%= link_to "Addresses", addresses_path %>
+<h1>Add address</h1>
+
+<%= form_with model: @address do |form| %>
+  <div>
+    <%= form.label :url %>
+    <%= form.text_field :url %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
