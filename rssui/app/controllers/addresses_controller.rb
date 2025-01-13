@@ -15,6 +15,7 @@ class AddressesController < ApplicationController
   def destroy
     @address = Address.find(params[:id])
     if @address.delete
+      RssJob.perform_later
       redirect_to addresses_path
     end
   end
@@ -22,6 +23,7 @@ class AddressesController < ApplicationController
   def create
     @address = Address.new(address_params)
     if @address.save
+      RssJob.perform_later
       redirect_to addresses_path
     else
       render :new, status: :unprocessable_entity

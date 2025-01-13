@@ -17,6 +17,10 @@ class RssItem
 end
 
 class ViewerController < ApplicationController
+  def refresh
+    RssJob.perform_later
+  end
+
   def index
     urls = ["https://news.google.com/rss/search?hl=en-US&gl=US&q=samsung&um=1&ie=UTF-8&ceid=US:en"]
 
