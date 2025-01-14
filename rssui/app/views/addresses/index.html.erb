@@ -1,11 +1,20 @@
-<h1>Addresses</h1>
-
-<%= link_to "Add", addresses_new_path %>
-
-<div id="addresses">
-  <% @addresses.each do |address| %>
+<div class="container">
+  <div class="row">
+    <div class="col-1" >Addresses</div>
     <div>
-      <%= address.id %><%= address.url %> <%= link_to "Edit", address %>
+    <%= link_to "Add", addresses_new_path %>
+    </div>
+</div>
+<div class="row" id="addresses">
+  <% @addresses.each do |address| %>
+    <div class="col-1">
+      <%= address.id %>
+    </div>
+    <div class="col-1">
+      <%= link_to "Edit", address %>
+    </div>
+    <div class="col">
+      <%= address.url %>
     </div>
   <% end %>
 </div>

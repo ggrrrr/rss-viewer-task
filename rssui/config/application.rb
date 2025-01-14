@@ -8,6 +8,7 @@ Bundler.require(*Rails.groups)
 
 module Rssui
   class Application < Rails::Application
+    config.rss_url = "my value"
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
 

@@ -1,13 +1,21 @@
-<%= link_to "Addresses", addresses_path %>
-<h1>Add address</h1>
-
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h2>Add address</h2>
+    </div>
+</div>
+<div class="row">
 <%= form_with model: @address do |form| %>
-  <div>
-    <%= form.label :url %>
-    <%= form.text_field :url %>
-  </div>
-
-  <div>
-    <%= form.submit %>
+  <div class="row">
+    <div class="col-md-2 mb-4">
+      <%= form.label :url, "URL", class: "form-control"%>
+    </div>
+    <div class="col-md-4 mb-4">
+      <%= form.text_field :url, class: "form-control" %>
+    </div>
+    <div class="col-6">
+      <%= form.submit class: "form-control" %>
+    </div>
   </div>
 <% end %>
+</div>

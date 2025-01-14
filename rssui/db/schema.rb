@@ -10,9 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_12_092605) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_13_214104) do
   create_table "addresses", force: :cascade do |t|
     t.string "url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "rss_items", force: :cascade do |t|
+    t.text "uniq_hash"
+    t.text "title"
+    t.text "link"
+    t.text "source"
+    t.text "source_url"
+    t.text "description"
+    t.datetime "publish_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
