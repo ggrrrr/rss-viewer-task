@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 	"net/http"
+	"strings"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -12,9 +13,10 @@ import (
 	"github.com/ggrrrr/rss-viewer-task/be/pkg/common/auth"
 )
 
-func (s *System) StartWeb(ctx context.Context) error {
-	slog.Info("StartWeb")
-	// addr := s.cfg.Rest.Address
+func (s *System) startWEB(ctx context.Context) {
+	slog.Info("startWEB")
+
+	ctx, cancel := context.WithCancel(ctx)
 	webServer := &http.Server{
 		Addr:    s.cfg.ListenAddr,
 		Handler: s.mux,
@@ -25,10 +27,11 @@ func (s *System) StartWeb(ctx context.Context) error {
 		slog.Info("rest starting...",
 			slog.String("ListenAddr", s.cfg.ListenAddr),
 		)
-		defer slog.Info("web server shutdown")
+
 		if err := webServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			return err
 		}
+
 		return nil
 	})
 
@@ -39,25 +42,35 @@ func (s *System) StartWeb(ctx context.Context) error {
 		)
 		ctx, cancel := context.WithTimeout(context.Background(), s.cfg.Timeout)
 		defer cancel()
+
 		if err := webServer.Shutdown(ctx); err != nil {
 			return err
 		}
-		return group.Wait()
+
+		return nil
 	})
 
-	return group.Wait()
+	s.shutdownFunc = append(s.shutdownFunc, func() error {
+		slog.Info("web.shutdown")
+		cancel()
+		webServer.Close()
+		return nil
+	})
+
+	s.startupFunc = append(s.startupFunc, func() error {
+		return group.Wait()
+	})
 }
 
-func newHTTPRouter(s *System) {
+func initHTTPRouter(s *System) {
 	s.mux = chi.NewRouter()
-	// s.mux.NotFound(web.MethodNotFoundHandler)
-	// s.mux.MethodNotAllowed(web.MethodNotAllowedHandler)
 	s.mux.Use(s.httpHandlerCORS)
 	s.mux.Use(middleware.Heartbeat("/liveness"))
 	s.mux.Use(middleware.Logger)
 	s.mux.Use(s.httpHandlerAuth)
-	// s.mux.Use(middleware.Recoverer)
+	s.mux.Use(middleware.Recoverer)
 
+	s.startWEB(context.Background())
 }
 
 func (s *System) httpHandlerCORS(next http.Handler) http.Handler {
@@ -82,15 +95,34 @@ func (s *System) httpHandlerCORS(next http.Handler) http.Handler {
 	})
 }
 
+// TODO unit testt
 func (s *System) httpHandlerAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// TODO READ  HEADER and parse JWT
-		slog.InfoContext(r.Context(), "httpHandlerAuth")
-		authInfo := auth.AuthInfo{
-			User: "admin",
+		defer func() {
+			next.ServeHTTP(w, r)
+		}()
+
+		authHeader := r.Header.Get("Authorization")
+		if len(authHeader) == 0 {
+			slog.ErrorContext(r.Context(), "httpHandlerAuth.NoHeader")
+			return
 		}
+
+		splitToken := strings.Split(authHeader, " ")
+		if len(splitToken) != 2 {
+			slog.ErrorContext(r.Context(), "httpHandlerAuth.NoHeader.Bearer")
+			return
+		}
+		slog.InfoContext(r.Context(), "httpHandlerAuth", slog.Any("Authorization", splitToken[1]))
+
+		authInfo, err := s.verifier.Verify(splitToken[1])
+		if err != nil {
+			slog.ErrorContext(r.Context(), "httpHandlerAuth", slog.Any("error", err))
+			return
+		}
+
+		slog.InfoContext(r.Context(), "httpHandlerAuth", slog.Any("authInfo", authInfo))
 		ctx := auth.Inject(r.Context(), authInfo)
-		newReq := r.WithContext(ctx)
-		next.ServeHTTP(w, newReq)
+		r = r.WithContext(ctx)
 	})
 }

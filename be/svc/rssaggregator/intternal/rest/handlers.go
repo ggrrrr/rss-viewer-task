@@ -24,6 +24,7 @@ type (
 func (s server) fetchRSS(w http.ResponseWriter, r *http.Request) {
 	user := auth.Extract(r.Context())
 	if !auth.HasAccess(user) {
+		slog.Warn("fetch.Unauthorized", slog.Any("user", user))
 		web.SendUnauthorized(w)
 		return
 	}

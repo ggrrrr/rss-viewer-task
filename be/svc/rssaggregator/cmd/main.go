@@ -23,7 +23,7 @@ func main() {
 
 	router := rest.Router(a)
 	s.MountAPI("/v1", router)
-	err = s.StartWeb(context.Background())
+	err = s.Start(context.Background())
 	if err != nil {
 		panic(err)
 	}
