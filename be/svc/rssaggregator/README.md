@@ -5,7 +5,7 @@
 * `/v1/parse`
   * Example curl usage:
 
-    ```bash
+    ```sh
 
     curl -XPOST -H'Authorization: Bearer JWT_TOKEN' -d'{"urls":["asdurl"]}' localhost:8080/v1/parse
 

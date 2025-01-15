@@ -6,6 +6,15 @@
 * Create a Golang Rss Reader service that uses the RSS package
 * Create a Rails application
 
+## Some tasks for which I did not have the time for...
+
+* Add unit tests to the common libs
+* Add OTEL and spans to GoLang
+* Working Dockerfile for the Rails app and add it to docker-compose
+* Add unit test to Ruby
+* Add JWT signer to the Ruby
+* Add OTEL to Ruby
+
 ## Code structure
 
 * [be](/be) -- backend services and libraries in GoLang
@@ -45,7 +54,7 @@
 
 * Run docker
 
-  ```bash
+  ```sh
   docker compose up -d rss
   ```
 
@@ -62,7 +71,7 @@
 
 * From console run the following:
 
-    ```bash
+    ```sh
     # Source the env variables
     source .env
 
@@ -73,3 +82,5 @@
     # Run the application
     ./bin/rails server
     # access the page with your browser default is: http://localhost:3000
+
+    ```

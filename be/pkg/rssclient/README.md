@@ -15,8 +15,8 @@ Entry Method: `Parse(ctx context.Context, urls []string)`
 
 ### run the following
 
-```bash
-# get  the package
+```sh
+# get the package
 go get github.com/ggrrrr/rss-viewer-task/be/pkg/rssclient
 
 ```

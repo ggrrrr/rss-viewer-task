@@ -4,7 +4,7 @@
 
 * Generators
 
-```bash
+```sh
 
 # Models for RSS sources
 bin/rails generate model  Address url:string
@@ -19,6 +19,5 @@ bin/rails generate model rss_item \
 rails generate controller sources index delete create
 
 rails generate controller home index
-
 
 ```
