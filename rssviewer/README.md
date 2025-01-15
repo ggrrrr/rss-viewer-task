@@ -1,9 +1,6 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
+* Take your rss aggregator service take not of the host and port on which it is listening.
 
 * Generators
 

@@ -18,3 +18,4 @@ RUN addgroup -g 1000 -S app && \
 
 COPY --from=builder --chown=app:app /build/app /app/app
 
+CMD [ "/app/app" ]

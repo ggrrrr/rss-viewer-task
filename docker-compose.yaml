@@ -1,0 +1,9 @@
+services:
+  rss:
+    hostname: rss
+    container_name: rss
+    image: local/svc/rssaggregator:latest
+    ports:
+      - 8080:8080
+    environment:
+      - LISTEN_ADDR=:8080
