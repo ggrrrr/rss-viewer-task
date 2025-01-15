@@ -1,0 +1,2 @@
+class RssItem < ApplicationRecord
+end

@@ -1,0 +1,15 @@
+<div class="container">
+  <div class="row">
+    <div class="col-1" >RSS Sources</div>
+    <div><%= link_to "Add", rss_sources_new_path %></div>
+  </div>
+</div>
+<div class="container">
+  <% @data.each do |source| %>
+  <div class="row" id="source">
+    <div class="col-1"><%= source.id %></div>
+    <div class="col-1"><%= link_to "Edit", source %></div>
+    <div class="col"><%= source.url %></div>
+  </div>
+  <% end %>
+</div>

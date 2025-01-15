@@ -1,0 +1,33 @@
+<%= form_with method: :get do |form| %>
+<div class="container">
+<div class="row">
+<div class="col-2">
+  <%= form.search_field :title, placeholder: "Title" %>
+</div>
+<div class="col-2">
+  <%= form.search_field :source, placeholder: "Source"   %>
+</div>
+<div class="col-2">
+  <%= form.submit "Search"  %>
+</div>
+<% end %>
+</div>
+</div>
+<div class="container" id="data">
+  <div class="row card-header">
+  <div class="col-1 my-0 font-weight-normal">ID</div>
+  <div class="col-10">Title</div>
+  </div>
+  <% @data.each do |item| %>
+  <div class="row card-title" id="data">
+    <div  class="col-1">
+      <%= item.id %>
+    </div>
+    <div  class="col-10">
+      <%= link_to item.title, item.link, :target => "_blank" %>
+    </div>
+  </div>
+<% end %>
+</div>
+
+</div>

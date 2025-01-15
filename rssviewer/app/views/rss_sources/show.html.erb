@@ -1,0 +1,9 @@
+<div class="container">
+<div class="row">
+</div>
+<div class="row">
+    <div class="col-1"><%= link_to "Back", rss_sources_path %></div>
+    <div class="col-1"><%= button_to "Delete", @source, method: :delete, data: { turbo_confirm: "Are you sure?" } %></div>
+    <div class="col-2"><%= @source.url %></div>
+</div>
+</div>
